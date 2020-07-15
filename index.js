@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
+const cors = require('cors');
 
 const { addUsers, removeUsers, getUser, getUsersInRoom } = require('./users')
 
@@ -46,12 +47,13 @@ io.on('connection', (socket) => {
         const user = removeUsers(socket.id);
         if (user) {
             io.to(user.room).emit('message', { user: 'admin', text: `${user.name} has left.` });
-            io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+            io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
         }
     })
 })
 
 app.use(router);
+app.use(cors());
 
 server.listen(PORT, () => { console.log(`Server is running at port ${PORT}`); })
 
