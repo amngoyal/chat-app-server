@@ -23,10 +23,12 @@ io.on('connection', (socket) => {
 
         if (error) callback(error);
 
+        socket.join(user.room);
+
         socket.emit('message', { user: 'admin', text: `${user.name}, Welcome to the room ${user.room}.` });
         socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name}, has joined` });
 
-        socket.join(user.room);
+        io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
 
         callback();
     })
